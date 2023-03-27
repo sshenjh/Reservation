@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="ISO-8859-1">
+    <title>Flights Info</title>
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+          crossorigin="anonymous">
+</head>
+<body>
+<div class="container my-2" align="center">
+
+    <h3>Flight Info</h3>
+    <a th:href="@{/flights}"> Back to Flight List</a>
+
+    <span th:text ="${#authentication.principal.username}"></span>
+    <!--    <a th:href="@{/addnew}" class="btn btn-primary btn-sm mb-3" >Add Employee</a>-->
+    <table style="width:80%" border="1"
+           class = "table table-striped table-responsive-md">
+        <thead>
+        <tr>
+            <th>Seat Number</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+
+
+
+        <tr th:each="i: ${#numbers.sequence(1, 10)}" >
+
+<!--            <button th:if="${response.page == i}" class="active">Dummy</button>-->
+<!--            <button th:unless="${response.page == i}">Dummy</button>-->
+            <td th:text="${i}"> </td>
+
+            <td>
+                <a  th:if="${@userFlightServiceImpl.checkUserBooking(flight.id,#authentication.principal.username,i)}==false"
+                   th:href="@{/bookFlight/{username}/{id}/{seat}(username=${#authentication.principal.username},
+            id=${flight.id},seat=${i})}"
+                    class="btn btn-primary">Book</a>
+                <a th:if="${i}==${info.seat} and
+                        ${flight.id}==${info.flight.getId()} and
+                        ${#authentication.principal.username}==${info.user.getUsername()}"
+                        th:each="info:${userFlight}"
+                        th:href="@{/cancelFlight/{username}/{id}/{seat}/{ufid}(username=${#authentication.principal.username},
+                        id=${flight.id},seat=${i},ufid=${info.id})}"
+                        class="btn btn-primary">Cancel</a>
+                <a th:if="${i}==${info.seat} and
+                        ${flight.id}==${info.flight.getId()} and
+                        ${#authentication.principal.username}!=${info.user.getUsername()}"
+                        th:each="info:${userFlight}">Booked</a>
+                <a th:if="${@userFlightServiceImpl.checkSeatAvailable(flight.id,i)}==false
+                            and ${@userFlightServiceImpl.userBooked(flight.id,#authentication.principal.username)}==true"
+                   th:each="info:${userFlight}"
+                   th:href="@{/updateFlight/{ufid}/{seat}(ufid=${info.id},seat=${i})}"
+                   class="btn btn-primary">Update</a>
+
+            </td>
+        </tr>
+
+<!--        <tr th:each="flight:${flights}">-->
+<!--            <td th:text="${flight.flightNumber}"></td>-->
+<!--            <td th:text="${flight.departure}"></td>-->
+<!--            <td th:text="${flight.arrival}"></td>-->
+<!--            <td> <a th:href="@{/flightInfo/{id}(id=${flight.id})}"-->
+<!--                    class="btn btn-primary">Book Flight</a>-->
+<!--                &lt;!&ndash;                <a th:href="@{/deleteEmployee/{id}(id=${employee.id})}"&ndash;&gt;-->
+<!--                &lt;!&ndash;                   class="btn btn-danger">Delete</a>&ndash;&gt;-->
+<!--            </td>-->
+<!--        </tr>-->
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
